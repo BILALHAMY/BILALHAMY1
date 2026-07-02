@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Color Fun Land! 🌈</title>
+<style>
+  :root {
+    --bounce: cubic-bezier(.68,-0.55,.27,1.55);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Comic Sans MS', 'Trebuchet MS', Verdana, sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee, #fbc2eb, #ff9a9e);
+    background-size: 400% 400%;
+    animation: bgShift 18s ease infinite;
+    touch-action: manipulation;
+    user-select: none;
+  }
+  @keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  h1.title {
+    text-align: center;
+    font-size: clamp(2rem, 6vw, 4rem);
+    margin: 0.5em 0 0.2em;
+    color: #fff;
+    text-shadow: 3px 3px 0 #ff5e78, 6px 6px 10px rgba(0,0,0,0.15);
+    animation: wiggle 3s ease-in-out infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #fff;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    margin-bottom: 1em;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  }
+
+  nav.tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1em;
+    padding: 0 10px;
+  }
+  nav.tabs button {
+    font-family: inherit;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    font-weight: bold;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    background: #fff;
+    color: #555;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+    transition: transform 0.15s var(--bounce), box-shadow 0.15s;
+  }
+  nav.tabs button:hover { transform: translateY(-3px) scale(1.05); }
+  nav.tabs button:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+  nav.tabs button.active {
+    background: #ff5e78;
+    color: #fff;
+    box-shadow: 0 5px 0 #c23a52;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  .panel {
+    display: none;
+    background: rgba(255,255,255,0.85);
+    border-radius: 30px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    animation: popIn 0.4s var(--bounce);
+  }
+  .panel.active { display: block; }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  /* ---------- Paint Splash ---------- */
+  #paintArea {
+    position: relative;
+    width: 100%;
+    height: 55vh;
+    min-height: 320px;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 6px dashed #ffb6d9;
+    overflow: hidden;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .splash {
+    position: absolute;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: splashPop 0.6s var(--bounce) forwards;
+    pointer-events: none;
+  }
+  @keyframes splashPop {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    70% { transform: translate(-50%, -50%) scale(1.15); }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  }
+  .paint-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .swatch {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.15s var(--bounce);
+  }
+  .swatch:hover { transform: scale(1.15) rotate(10deg); }
+  .swatch.selected { border-color: #333; transform: scale(1.2); }
+  .clear-btn {
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 50px;
+    background: #555;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #222;
+  }
+  .clear-btn:active { transform: translateY(4px); box-shadow: none; }
+
+  /* ---------- Bubble Pop ---------- */
+  #bubbleArea {
+    position: relative;
+    width: 100%;
+    height: 55vh;
+    min-height: 320px;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #cdefff, #e8fbff);
+    overflow: hidden;
+  }
+  .bubble {
+    position: absolute;
+    bottom: -80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    cursor: pointer;
+    box-shadow: inset -6px -6px 12px rgba(255,255,255,0.5), inset 6px 6px 12px rgba(0,0,0,0.08);
+    animation: floatUp linear forwards;
+  }
+  @keyframes floatUp {
+    from { transform: translateY(0) translateX(0); }
+    to { transform: translateY(-110vh) translateX(var(--drift)); }
+  }
+  .pop {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: popOut 0.4s ease-out forwards;
+  }
+  @keyframes popOut {
+    from { transform: scale(1); opacity: 0.9; }
+    to { transform: scale(1.8); opacity: 0; }
+  }
+  .score-bar {
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #ff5e78;
+    margin-top: 12px;
+  }
+
+  /* ---------- Color Matcher Game ---------- */
+  .match-wrap { text-align: center; }
+  .target-swatch {
+    width: 90px;
+    height: 90px;
+    border-radius: 20px;
+    margin: 10px auto 20px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    border: 5px solid #fff;
+  }
+  .options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .option {
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
+    cursor: pointer;
+    border: 5px solid #fff;
+    box-shadow: 0 5px 0 rgba(0,0,0,0.15);
+    transition: transform 0.15s var(--bounce);
+  }
+  .option:hover { transform: scale(1.1); }
+  .option:active { transform: scale(0.95); }
+  .feedback {
+    margin-top: 18px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    height: 2em;
+  }
+  .feedback.good { color: #2ecc71; }
+  .feedback.bad { color: #e74c3c; }
+
+  .stars {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-top: 10px;
+    letter-spacing: 4px;
+  }
+
+  footer {
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+    font-size: 0.9rem;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+  }
+
+  @media (max-width: 480px) {
+    .swatch { width: 40px; height: 40px; }
+    .option { width: 64px; height: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<h1 class="title">🌈 Color Fun Land! 🎨</h1>
+<p class="subtitle">Tap, splash, and pop your way through colors!</p>
+
+<nav class="tabs">
+  <button class="tab-btn active" data-tab="paint">🎨 Paint Splash</button>
+  <button class="tab-btn" data-tab="bubbles">🫧 Bubble Pop</button>
+  <button class="tab-btn" data-tab="match">🧩 Color Match</button>
+</nav>
+
+<main>
+  <!-- Paint Splash Panel -->
+  <section id="paint" class="panel active">
+    <div id="paintArea" aria-label="Tap or click anywhere to splash color"></div>
+    <div class="paint-controls" id="swatches"></div>
+    <div class="paint-controls">
+      <button class="clear-btn" id="clearBtn">🧹 Clear</button>
+    </div>
+  </section>
+
+  <!-- Bubble Pop Panel -->
+  <section id="bubbles" class="panel">
+    <div id="bubbleArea" aria-label="Pop the floating bubbles"></div>
+    <div class="score-bar">Bubbles Popped: <span id="score">0</span> 🎉</div>
+  </section>
+
+  <!-- Color Match Panel -->
+  <section id="match" class="panel">
+    <div class="match-wrap">
+      <p style="font-size:1.2rem; font-weight:bold; color:#555;">Find the matching color!</p>
+      <div class="target-swatch" id="targetSwatch"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="stars" id="stars"></div>
+    </div>
+  </section>
+</main>
+
+<footer>Made with 💖 for little artists and explorers</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var COLORS = [
+    { name: "Red", hex: "#FF5E5E" },
+    { name: "Orange", hex: "#FFA34D" },
+    { name: "Yellow", hex: "#FFE156" },
+    { name: "Green", hex: "#4CD964" },
+    { name: "Blue", hex: "#4DA3FF" },
+    { name: "Purple", hex: "#B266FF" },
+    { name: "Pink", hex: "#FF6FCB" },
+    { name: "Teal", hex: "#4DE0D0" }
+  ];
+
+  /* ---------- Tabs ---------- */
+  var tabButtons = document.querySelectorAll(".tab-btn");
+  var panels = document.querySelectorAll(".panel");
+
+  tabButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      tabButtons.forEach(function (b) { b.classList.remove("active"); });
+      panels.forEach(function (p) { p.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+      if (btn.dataset.tab === "bubbles") startBubbles();
+      else stopBubbles();
+      if (btn.dataset.tab === "match") newRound();
+    });
+  });
+
+  /* ---------- Paint Splash ---------- */
+  var paintArea = document.getElementById("paintArea");
+  var swatchesEl = document.getElementById("swatches");
+  var currentColor = COLORS[0].hex;
+
+  COLORS.forEach(function (c, i) {
+    var sw = document.createElement("div");
+    sw.className = "swatch" + (i === 0 ? " selected" : "");
+    sw.style.background = c.hex;
+    sw.title = c.name;
+    sw.addEventListener("click", function () {
+      document.querySelectorAll(".swatch").forEach(function (s) { s.classList.remove("selected"); });
+      sw.classList.add("selected");
+      currentColor = c.hex;
+    });
+    swatchesEl.appendChild(sw);
+  });
+
+  function splashAt(x, y) {
+    var splash = document.createElement("div");
+    var size = 30 + Math.random() * 50;
+    splash.className = "splash";
+    splash.style.left = x + "px";
+    splash.style.top = y + "px";
+    splash.style.width = size + "px";
+    splash.style.height = size + "px";
+    splash.style.background = currentColor;
+    paintArea.appendChild(splash);
+    setTimeout(function () { splash.remove(); }, 3000);
+  }
+
+  function paintHandler(e) {
+    var rect = paintArea.getBoundingClientRect();
+    var point = e.touches ? e.touches[0] : e;
+    var x = point.clientX - rect.left;
+    var y = point.clientY - rect.top;
+    splashAt(x, y);
+  }
+
+  paintArea.addEventListener("mousedown", paintHandler);
+  paintArea.addEventListener("touchstart", function (e) {
+    paintHandler(e);
+  }, { passive: true });
+
+  document.getElementById("clearBtn").addEventListener("click", function () {
+    paintArea.innerHTML = "";
+  });
+
+  /* ---------- Bubble Pop ---------- */
+  var bubbleArea = document.getElementById("bubbleArea");
+  var scoreEl = document.getElementById("score");
+  var score = 0;
+  var bubbleInterval = null;
+  var emojis = ["⭐", "🌟", "❤️", "💛", "💚", "💙", "💜", "🧡"];
+
+  function spawnBubble() {
+    var b = document.createElement("div");
+    var size = 40 + Math.random() * 50;
+    var color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    var startX = Math.random() * (bubbleArea.clientWidth - size);
+    var drift = (Math.random() * 100 - 50) + "px";
+    var duration = 5 + Math.random() * 4;
+
+    b.className = "bubble";
+    b.style.width = size + "px";
+    b.style.height = size + "px";
+    b.style.left = startX + "px";
+    b.style.background = color.hex + "cc";
+    b.style.setProperty("--drift", drift);
+    b.style.animationDuration = duration + "s";
+    b.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+    b.addEventListener("click", function () { popBubble(b); });
+    b.addEventListener("touchstart", function (e) { e.preventDefault(); popBubble(b); }, { passive: false });
+
+    b.addEventListener("animationend", function () {
+      if (b.parentNode) b.remove();
+    });
+
+    bubbleArea.appendChild(b);
+  }
+
+  function popBubble(b) {
+    if (!b.parentNode) return;
+    var rect = b.getBoundingClientRect();
+    var areaRect = bubbleArea.getBoundingClientRect();
+    var pop = document.createElement("div");
+    pop.className = "pop";
+    pop.style.width = b.offsetWidth + "px";
+    pop.style.height = b.offsetHeight + "px";
+    pop.style.left = (rect.left - areaRect.left) + "px";
+    pop.style.top = (rect.top - areaRect.top) + "px";
+    pop.style.background = b.style.background;
+    bubbleArea.appendChild(pop);
+    setTimeout(function () { pop.remove(); }, 400);
+
+    b.remove();
+    score++;
+    scoreEl.textContent = score;
+  }
+
+  function startBubbles() {
+    if (bubbleInterval) return;
+    bubbleInterval = setInterval(spawnBubble, 900);
+  }
+  function stopBubbles() {
+    if (bubbleInterval) {
+      clearInterval(bubbleInterval);
+      bubbleInterval = null;
+    }
+  }
+
+  /* ---------- Color Match Game ---------- */
+  var targetSwatch = document.getElementById("targetSwatch");
+  var optionsEl = document.getElementById("options");
+  var feedbackEl = document.getElementById("feedback");
+  var starsEl = document.getElementById("stars");
+  var starCount = 0;
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function newRound() {
+    feedbackEl.textContent = "";
+    feedbackEl.className = "feedback";
+    var target = COLORS[Math.floor(Math.random() * COLORS.length)];
+    targetSwatch.style.background = target.hex;
+
+    var pool = shuffle(COLORS.filter(function (c) { return c.hex !== target.hex; })).slice(0, 3);
+    var choices = shuffle(pool.concat([target]));
+
+    optionsEl.innerHTML = "";
+    choices.forEach(function (c) {
+      var opt = document.createElement("div");
+      opt.className = "option";
+      opt.style.background = c.hex;
+      opt.addEventListener("click", function () {
+        if (c.hex === target.hex) {
+          feedbackEl.textContent = "🎉 Yay! That's " + target.name + "!";
+          feedbackEl.className = "feedback good";
+          starCount++;
+          updateStars();
+          setTimeout(newRound, 1200);
+        } else {
+          feedbackEl.textContent = "Try again! 😊";
+          feedbackEl.className = "feedback bad";
+        }
+      });
+      optionsEl.appendChild(opt);
+    });
+  }
+
+  function updateStars() {
+    var shown = Math.min(starCount, 10);
+    starsEl.textContent = "⭐".repeat(shown) + (starCount > 10 ? " +" + (starCount - 10) : "");
+  }
+
+  /* init */
+  newRound();
+})();
+</script>
+</body>
+</html>
