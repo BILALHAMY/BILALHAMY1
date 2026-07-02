@@ -2,497 +2,364 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Color Fun Land! 🌈</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>Color Magic! 🌈</title>
 <style>
-  :root {
-    --bounce: cubic-bezier(.68,-0.55,.27,1.55);
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    overflow-x: hidden;
-    font-family: 'Comic Sans MS', 'Trebuchet MS', Verdana, sans-serif;
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee, #fbc2eb, #ff9a9e);
-    background-size: 400% 400%;
-    animation: bgShift 18s ease infinite;
-    touch-action: manipulation;
-    user-select: none;
-  }
-  @keyframes bgShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  h1.title {
-    text-align: center;
-    font-size: clamp(2rem, 6vw, 4rem);
-    margin: 0.5em 0 0.2em;
-    color: #fff;
-    text-shadow: 3px 3px 0 #ff5e78, 6px 6px 10px rgba(0,0,0,0.15);
-    animation: wiggle 3s ease-in-out infinite;
-  }
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(-2deg); }
-    50% { transform: rotate(2deg); }
-  }
-
-  .subtitle {
-    text-align: center;
-    color: #fff;
-    font-size: clamp(1rem, 2.5vw, 1.4rem);
-    margin-bottom: 1em;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-  }
-
-  nav.tabs {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 1em;
-    padding: 0 10px;
-  }
-  nav.tabs button {
-    font-family: inherit;
-    font-size: clamp(0.9rem, 2vw, 1.2rem);
-    font-weight: bold;
-    padding: 12px 22px;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    background: #fff;
-    color: #555;
-    box-shadow: 0 5px 0 rgba(0,0,0,0.15);
-    transition: transform 0.15s var(--bounce), box-shadow 0.15s;
-  }
-  nav.tabs button:hover { transform: translateY(-3px) scale(1.05); }
-  nav.tabs button:active { transform: translateY(3px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
-  nav.tabs button.active {
-    background: #ff5e78;
-    color: #fff;
-    box-shadow: 0 5px 0 #c23a52;
-  }
-
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 16px 60px;
-  }
-
-  .panel {
-    display: none;
-    background: rgba(255,255,255,0.85);
-    border-radius: 30px;
-    padding: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    animation: popIn 0.4s var(--bounce);
-  }
-  .panel.active { display: block; }
-  @keyframes popIn {
-    from { opacity: 0; transform: scale(0.85); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  /* ---------- Paint Splash ---------- */
-  #paintArea {
-    position: relative;
-    width: 100%;
-    height: 55vh;
-    min-height: 320px;
-    border-radius: 24px;
-    background: #ffffff;
-    border: 6px dashed #ffb6d9;
     overflow: hidden;
-    cursor: crosshair;
+    background: #0b0b1a;
     touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: none;
   }
-  .splash {
-    position: absolute;
-    border-radius: 50%;
-    transform: translate(-50%, -50%) scale(0);
-    animation: splashPop 0.6s var(--bounce) forwards;
-    pointer-events: none;
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
   }
-  @keyframes splashPop {
-    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-    70% { transform: translate(-50%, -50%) scale(1.15); }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
-  }
-  .paint-controls {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 16px;
-  }
-  .swatch {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 4px solid #fff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    cursor: pointer;
-    transition: transform 0.15s var(--bounce);
-  }
-  .swatch:hover { transform: scale(1.15) rotate(10deg); }
-  .swatch.selected { border-color: #333; transform: scale(1.2); }
-  .clear-btn {
-    font-family: inherit;
+  #hint {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Comic Sans MS', 'Trebuchet MS', Verdana, sans-serif;
+    font-size: clamp(1.5rem, 6vw, 3rem);
     font-weight: bold;
-    font-size: 1rem;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 50px;
-    background: #555;
     color: #fff;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #222;
+    text-shadow: 0 0 20px rgba(255,255,255,0.8), 3px 3px 0 rgba(0,0,0,0.2);
+    text-align: center;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 1.5s ease;
+    z-index: 10;
   }
-  .clear-btn:active { transform: translateY(4px); box-shadow: none; }
+  #hint.hidden { opacity: 0; }
 
-  /* ---------- Bubble Pop ---------- */
-  #bubbleArea {
-    position: relative;
-    width: 100%;
-    height: 55vh;
-    min-height: 320px;
-    border-radius: 24px;
-    background: linear-gradient(180deg, #cdefff, #e8fbff);
-    overflow: hidden;
-  }
-  .bubble {
-    position: absolute;
-    bottom: -80px;
+  #muteBtn {
+    position: fixed;
+    top: max(14px, env(safe-area-inset-top));
+    right: max(14px, env(safe-area-inset-right));
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
     cursor: pointer;
-    box-shadow: inset -6px -6px 12px rgba(255,255,255,0.5), inset 6px 6px 12px rgba(0,0,0,0.08);
-    animation: floatUp linear forwards;
+    z-index: 20;
+    backdrop-filter: blur(4px);
   }
-  @keyframes floatUp {
-    from { transform: translateY(0) translateX(0); }
-    to { transform: translateY(-110vh) translateX(var(--drift)); }
-  }
-  .pop {
-    position: absolute;
-    border-radius: 50%;
+
+  .emoji-pop {
+    position: fixed;
+    font-size: 2.5rem;
     pointer-events: none;
-    animation: popOut 0.4s ease-out forwards;
+    z-index: 15;
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 1;
+    animation: emojiFloat 1.4s ease-out forwards;
   }
-  @keyframes popOut {
-    from { transform: scale(1); opacity: 0.9; }
-    to { transform: scale(1.8); opacity: 0; }
-  }
-  .score-bar {
-    text-align: center;
-    font-size: 1.3rem;
-    font-weight: bold;
-    color: #ff5e78;
-    margin-top: 12px;
-  }
-
-  /* ---------- Color Matcher Game ---------- */
-  .match-wrap { text-align: center; }
-  .target-swatch {
-    width: 90px;
-    height: 90px;
-    border-radius: 20px;
-    margin: 10px auto 20px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-    border: 5px solid #fff;
-  }
-  .options {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .option {
-    width: 80px;
-    height: 80px;
-    border-radius: 18px;
-    cursor: pointer;
-    border: 5px solid #fff;
-    box-shadow: 0 5px 0 rgba(0,0,0,0.15);
-    transition: transform 0.15s var(--bounce);
-  }
-  .option:hover { transform: scale(1.1); }
-  .option:active { transform: scale(0.95); }
-  .feedback {
-    margin-top: 18px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    height: 2em;
-  }
-  .feedback.good { color: #2ecc71; }
-  .feedback.bad { color: #e74c3c; }
-
-  .stars {
-    text-align: center;
-    font-size: 1.8rem;
-    margin-top: 10px;
-    letter-spacing: 4px;
-  }
-
-  footer {
-    text-align: center;
-    color: #fff;
-    padding: 20px;
-    font-size: 0.9rem;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
-  }
-
-  @media (max-width: 480px) {
-    .swatch { width: 40px; height: 40px; }
-    .option { width: 64px; height: 64px; }
+  @keyframes emojiFloat {
+    0% { transform: translate(-50%, -50%) scale(0.3) rotate(0deg); opacity: 1; }
+    30% { transform: translate(-50%, -50%) scale(1.3) rotate(10deg); opacity: 1; }
+    100% { transform: translate(-50%, -160%) scale(1) rotate(-10deg); opacity: 0; }
   }
 </style>
 </head>
 <body>
 
-<h1 class="title">🌈 Color Fun Land! 🎨</h1>
-<p class="subtitle">Tap, splash, and pop your way through colors!</p>
-
-<nav class="tabs">
-  <button class="tab-btn active" data-tab="paint">🎨 Paint Splash</button>
-  <button class="tab-btn" data-tab="bubbles">🫧 Bubble Pop</button>
-  <button class="tab-btn" data-tab="match">🧩 Color Match</button>
-</nav>
-
-<main>
-  <!-- Paint Splash Panel -->
-  <section id="paint" class="panel active">
-    <div id="paintArea" aria-label="Tap or click anywhere to splash color"></div>
-    <div class="paint-controls" id="swatches"></div>
-    <div class="paint-controls">
-      <button class="clear-btn" id="clearBtn">🧹 Clear</button>
-    </div>
-  </section>
-
-  <!-- Bubble Pop Panel -->
-  <section id="bubbles" class="panel">
-    <div id="bubbleArea" aria-label="Pop the floating bubbles"></div>
-    <div class="score-bar">Bubbles Popped: <span id="score">0</span> 🎉</div>
-  </section>
-
-  <!-- Color Match Panel -->
-  <section id="match" class="panel">
-    <div class="match-wrap">
-      <p style="font-size:1.2rem; font-weight:bold; color:#555;">Find the matching color!</p>
-      <div class="target-swatch" id="targetSwatch"></div>
-      <div class="options" id="options"></div>
-      <div class="feedback" id="feedback"></div>
-      <div class="stars" id="stars"></div>
-    </div>
-  </section>
-</main>
-
-<footer>Made with 💖 for little artists and explorers</footer>
+<canvas id="canvas"></canvas>
+<div id="hint">✨ Touch the screen! ✨</div>
+<button id="muteBtn" aria-label="Toggle sound">🔊</button>
 
 <script>
 (function () {
   "use strict";
 
-  var COLORS = [
-    { name: "Red", hex: "#FF5E5E" },
-    { name: "Orange", hex: "#FFA34D" },
-    { name: "Yellow", hex: "#FFE156" },
-    { name: "Green", hex: "#4CD964" },
-    { name: "Blue", hex: "#4DA3FF" },
-    { name: "Purple", hex: "#B266FF" },
-    { name: "Pink", hex: "#FF6FCB" },
-    { name: "Teal", hex: "#4DE0D0" }
-  ];
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext("2d");
+  var hint = document.getElementById("hint");
+  var muteBtn = document.getElementById("muteBtn");
 
-  /* ---------- Tabs ---------- */
-  var tabButtons = document.querySelectorAll(".tab-btn");
-  var panels = document.querySelectorAll(".panel");
+  var DPR = Math.min(window.devicePixelRatio || 1, 2);
+  var W = 0, H = 0;
 
-  tabButtons.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      tabButtons.forEach(function (b) { b.classList.remove("active"); });
-      panels.forEach(function (p) { p.classList.remove("active"); });
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.tab).classList.add("active");
-      if (btn.dataset.tab === "bubbles") startBubbles();
-      else stopBubbles();
-      if (btn.dataset.tab === "match") newRound();
-    });
-  });
-
-  /* ---------- Paint Splash ---------- */
-  var paintArea = document.getElementById("paintArea");
-  var swatchesEl = document.getElementById("swatches");
-  var currentColor = COLORS[0].hex;
-
-  COLORS.forEach(function (c, i) {
-    var sw = document.createElement("div");
-    sw.className = "swatch" + (i === 0 ? " selected" : "");
-    sw.style.background = c.hex;
-    sw.title = c.name;
-    sw.addEventListener("click", function () {
-      document.querySelectorAll(".swatch").forEach(function (s) { s.classList.remove("selected"); });
-      sw.classList.add("selected");
-      currentColor = c.hex;
-    });
-    swatchesEl.appendChild(sw);
-  });
-
-  function splashAt(x, y) {
-    var splash = document.createElement("div");
-    var size = 30 + Math.random() * 50;
-    splash.className = "splash";
-    splash.style.left = x + "px";
-    splash.style.top = y + "px";
-    splash.style.width = size + "px";
-    splash.style.height = size + "px";
-    splash.style.background = currentColor;
-    paintArea.appendChild(splash);
-    setTimeout(function () { splash.remove(); }, 3000);
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
   }
+  window.addEventListener("resize", resize);
+  resize();
 
-  function paintHandler(e) {
-    var rect = paintArea.getBoundingClientRect();
-    var point = e.touches ? e.touches[0] : e;
-    var x = point.clientX - rect.left;
-    var y = point.clientY - rect.top;
-    splashAt(x, y);
-  }
+  var EMOJIS = ["🌟", "✨", "🎈", "🦄", "🌈", "💫", "🍭", "🌸", "🐬", "🍄", "🐝", "🦋"];
 
-  paintArea.addEventListener("mousedown", paintHandler);
-  paintArea.addEventListener("touchstart", function (e) {
-    paintHandler(e);
-  }, { passive: true });
-
-  document.getElementById("clearBtn").addEventListener("click", function () {
-    paintArea.innerHTML = "";
-  });
-
-  /* ---------- Bubble Pop ---------- */
-  var bubbleArea = document.getElementById("bubbleArea");
-  var scoreEl = document.getElementById("score");
-  var score = 0;
-  var bubbleInterval = null;
-  var emojis = ["⭐", "🌟", "❤️", "💛", "💚", "💙", "💜", "🧡"];
-
-  function spawnBubble() {
-    var b = document.createElement("div");
-    var size = 40 + Math.random() * 50;
-    var color = COLORS[Math.floor(Math.random() * COLORS.length)];
-    var startX = Math.random() * (bubbleArea.clientWidth - size);
-    var drift = (Math.random() * 100 - 50) + "px";
-    var duration = 5 + Math.random() * 4;
-
-    b.className = "bubble";
-    b.style.width = size + "px";
-    b.style.height = size + "px";
-    b.style.left = startX + "px";
-    b.style.background = color.hex + "cc";
-    b.style.setProperty("--drift", drift);
-    b.style.animationDuration = duration + "s";
-    b.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-
-    b.addEventListener("click", function () { popBubble(b); });
-    b.addEventListener("touchstart", function (e) { e.preventDefault(); popBubble(b); }, { passive: false });
-
-    b.addEventListener("animationend", function () {
-      if (b.parentNode) b.remove();
-    });
-
-    bubbleArea.appendChild(b);
-  }
-
-  function popBubble(b) {
-    if (!b.parentNode) return;
-    var rect = b.getBoundingClientRect();
-    var areaRect = bubbleArea.getBoundingClientRect();
-    var pop = document.createElement("div");
-    pop.className = "pop";
-    pop.style.width = b.offsetWidth + "px";
-    pop.style.height = b.offsetHeight + "px";
-    pop.style.left = (rect.left - areaRect.left) + "px";
-    pop.style.top = (rect.top - areaRect.top) + "px";
-    pop.style.background = b.style.background;
-    bubbleArea.appendChild(pop);
-    setTimeout(function () { pop.remove(); }, 400);
-
-    b.remove();
-    score++;
-    scoreEl.textContent = score;
-  }
-
-  function startBubbles() {
-    if (bubbleInterval) return;
-    bubbleInterval = setInterval(spawnBubble, 900);
-  }
-  function stopBubbles() {
-    if (bubbleInterval) {
-      clearInterval(bubbleInterval);
-      bubbleInterval = null;
+  /* ---------- Sound ---------- */
+  var muted = false;
+  var audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
     }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  }
+  function playPop(y) {
+    if (muted || !audioCtx) return;
+    var t = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    var freq = 300 + (1 - y / H) * 500 + Math.random() * 80;
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, t);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.8, t + 0.12);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start(t);
+    osc.stop(t + 0.32);
+  }
+  muteBtn.addEventListener("click", function () {
+    muted = !muted;
+    muteBtn.textContent = muted ? "🔇" : "🔊";
+    ensureAudio();
+  });
+
+  /* ---------- Hint ---------- */
+  var hintHidden = false;
+  function hideHint() {
+    if (hintHidden) return;
+    hintHidden = true;
+    hint.classList.add("hidden");
   }
 
-  /* ---------- Color Match Game ---------- */
-  var targetSwatch = document.getElementById("targetSwatch");
-  var optionsEl = document.getElementById("options");
-  var feedbackEl = document.getElementById("feedback");
-  var starsEl = document.getElementById("stars");
-  var starCount = 0;
-
-  function shuffle(arr) {
-    var a = arr.slice();
-    for (var i = a.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-    }
-    return a;
-  }
-
-  function newRound() {
-    feedbackEl.textContent = "";
-    feedbackEl.className = "feedback";
-    var target = COLORS[Math.floor(Math.random() * COLORS.length)];
-    targetSwatch.style.background = target.hex;
-
-    var pool = shuffle(COLORS.filter(function (c) { return c.hex !== target.hex; })).slice(0, 3);
-    var choices = shuffle(pool.concat([target]));
-
-    optionsEl.innerHTML = "";
-    choices.forEach(function (c) {
-      var opt = document.createElement("div");
-      opt.className = "option";
-      opt.style.background = c.hex;
-      opt.addEventListener("click", function () {
-        if (c.hex === target.hex) {
-          feedbackEl.textContent = "🎉 Yay! That's " + target.name + "!";
-          feedbackEl.className = "feedback good";
-          starCount++;
-          updateStars();
-          setTimeout(newRound, 1200);
-        } else {
-          feedbackEl.textContent = "Try again! 😊";
-          feedbackEl.className = "feedback bad";
-        }
+  /* ---------- Ambient blobs ---------- */
+  var blobs = [];
+  (function makeBlobs() {
+    var count = 6;
+    for (var i = 0; i < count; i++) {
+      blobs.push({
+        baseX: Math.random() * W,
+        baseY: Math.random() * H,
+        r: 140 + Math.random() * 160,
+        hue: Math.random() * 360,
+        speed: 0.15 + Math.random() * 0.2,
+        phase: Math.random() * Math.PI * 2,
+        ax: 80 + Math.random() * 120,
+        ay: 60 + Math.random() * 100
       });
-      optionsEl.appendChild(opt);
+    }
+  })();
+
+  /* ---------- Particles ---------- */
+  var particles = [];
+
+  function spawnTrailParticle(x, y, hue) {
+    particles.push({
+      x: x, y: y,
+      vx: (Math.random() - 0.5) * 1.2,
+      vy: (Math.random() - 0.5) * 1.2,
+      r: 8 + Math.random() * 14,
+      hue: hue,
+      life: 1,
+      decay: 0.02 + Math.random() * 0.015,
+      kind: "trail"
     });
   }
 
-  function updateStars() {
-    var shown = Math.min(starCount, 10);
-    starsEl.textContent = "⭐".repeat(shown) + (starCount > 10 ? " +" + (starCount - 10) : "");
+  function spawnBurst(x, y) {
+    var baseHue = Math.random() * 360;
+    var count = 34 + Math.floor(Math.random() * 14);
+    for (var i = 0; i < count; i++) {
+      var angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+      var speed = 2 + Math.random() * 6;
+      particles.push({
+        x: x, y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        r: 5 + Math.random() * 10,
+        hue: (baseHue + Math.random() * 80 - 40 + 360) % 360,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.012,
+        gravity: 0.05,
+        kind: "burst"
+      });
+    }
+    playPop(y);
+    spawnEmoji(x, y);
   }
 
-  /* init */
-  newRound();
+  function spawnEmoji(x, y) {
+    var el = document.createElement("div");
+    el.className = "emoji-pop";
+    el.style.left = x + "px";
+    el.style.top = y + "px";
+    el.textContent = EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
+    document.body.appendChild(el);
+    setTimeout(function () { el.remove(); }, 1500);
+  }
+
+  function updateParticles() {
+    for (var i = particles.length - 1; i >= 0; i--) {
+      var p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.gravity) p.vy += p.gravity;
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+      p.life -= p.decay;
+      if (p.life <= 0) {
+        particles.splice(i, 1);
+      }
+    }
+  }
+
+  function drawParticles() {
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      var alpha = Math.max(p.life, 0);
+      var r = p.r * (0.4 + 0.6 * p.life);
+      ctx.beginPath();
+      ctx.fillStyle = "hsla(" + p.hue + ", 90%, 65%, " + alpha + ")";
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  /* ---------- Pointer tracking ---------- */
+  var pointers = {};
+  var lastActivity = performance.now();
+
+  function handleDown(id, x, y) {
+    ensureAudio();
+    hideHint();
+    lastActivity = performance.now();
+    pointers[id] = { x: x, y: y, down: true, hue: Math.random() * 360 };
+    spawnBurst(x, y);
+  }
+
+  function handleMove(id, x, y) {
+    lastActivity = performance.now();
+    var p = pointers[id];
+    if (!p) return;
+    p.hue = (p.hue + 4) % 360;
+    var dx = x - p.x, dy = y - p.y;
+    var dist = Math.sqrt(dx * dx + dy * dy);
+    var steps = Math.min(Math.max(Math.floor(dist / 8), 1), 8);
+    for (var s = 0; s < steps; s++) {
+      var t = s / steps;
+      spawnTrailParticle(p.x + dx * t, p.y + dy * t, (p.hue + s * 10) % 360);
+    }
+    p.x = x;
+    p.y = y;
+  }
+
+  function handleUp(id) {
+    delete pointers[id];
+  }
+
+  canvas.addEventListener("pointerdown", function (e) {
+    canvas.setPointerCapture(e.pointerId);
+    handleDown(e.pointerId, e.clientX, e.clientY);
+  });
+  canvas.addEventListener("pointermove", function (e) {
+    if (pointers[e.pointerId]) handleMove(e.pointerId, e.clientX, e.clientY);
+  });
+  canvas.addEventListener("pointerup", function (e) { handleUp(e.pointerId); });
+  canvas.addEventListener("pointercancel", function (e) { handleUp(e.pointerId); });
+
+  /* ---------- Idle auto-play (keeps toddlers fascinated even without touching) ---------- */
+  var lastAutoBurst = 0;
+  function maybeAutoPlay(now) {
+    var idleFor = now - lastActivity;
+    if (idleFor > 2200 && now - lastAutoBurst > 1400) {
+      lastAutoBurst = now;
+      var x = W * (0.15 + Math.random() * 0.7);
+      var y = H * (0.15 + Math.random() * 0.7);
+      spawnBurstSilent(x, y);
+    }
+  }
+  function spawnBurstSilent(x, y) {
+    var baseHue = Math.random() * 360;
+    var count = 26 + Math.floor(Math.random() * 10);
+    for (var i = 0; i < count; i++) {
+      var angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+      var speed = 1.5 + Math.random() * 4.5;
+      particles.push({
+        x: x, y: y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        r: 5 + Math.random() * 9,
+        hue: (baseHue + Math.random() * 80 - 40 + 360) % 360,
+        life: 1,
+        decay: 0.012 + Math.random() * 0.01,
+        gravity: 0.04,
+        kind: "burst"
+      });
+    }
+    spawnEmoji(x, y);
+  }
+
+  /* ---------- Background gradient ---------- */
+  var bgHue = 220;
+  function drawBackground(now) {
+    bgHue = (bgHue + 0.05) % 360;
+    var g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, "hsl(" + bgHue + ", 55%, 14%)");
+    g.addColorStop(1, "hsl(" + ((bgHue + 60) % 360) + ", 55%, 10%)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawBlobs(now) {
+    ctx.save();
+    ctx.globalCompositeOperation = "lighter";
+    for (var i = 0; i < blobs.length; i++) {
+      var b = blobs[i];
+      b.hue = (b.hue + 0.08) % 360;
+      var t = now * 0.001 * b.speed + b.phase;
+      var x = b.baseX + Math.cos(t) * b.ax;
+      var y = b.baseY + Math.sin(t * 0.8) * b.ay;
+      var grad = ctx.createRadialGradient(x, y, 0, x, y, b.r);
+      grad.addColorStop(0, "hsla(" + b.hue + ", 90%, 60%, 0.35)");
+      grad.addColorStop(1, "hsla(" + b.hue + ", 90%, 60%, 0)");
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, b.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  /* ---------- Main loop ---------- */
+  function loop(now) {
+    drawBackground(now);
+    drawBlobs(now);
+    updateParticles();
+    drawParticles();
+    maybeAutoPlay(now);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  /* Kick off one gentle burst near the middle shortly after load to invite interaction */
+  setTimeout(function () {
+    spawnBurstSilent(W / 2, H / 2);
+  }, 900);
+
 })();
 </script>
 </body>
